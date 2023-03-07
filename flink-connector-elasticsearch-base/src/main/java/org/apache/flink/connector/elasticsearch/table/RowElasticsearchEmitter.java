@@ -34,7 +34,7 @@ import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.common.xcontent.XContentType;
+import org.elasticsearch.xcontent.XContentType;
 
 import javax.annotation.Nullable;
 
@@ -107,14 +107,12 @@ class RowElasticsearchEmitter implements ElasticsearchEmitter<RowData> {
         final String key = createKey.apply(row);
         if (key != null) {
             final UpdateRequest updateRequest =
-                    new UpdateRequest(indexGenerator.generate(row), documentType, key)
-                            .doc(document, contentType)
+                    new UpdateRequest(indexGenerator.generate(row), key).doc(document, contentType)
                             .upsert(document, contentType);
             indexer.add(updateRequest);
         } else {
             final IndexRequest indexRequest =
-                    new IndexRequest(indexGenerator.generate(row), documentType)
-                            .id(key)
+                    new IndexRequest(indexGenerator.generate(row)).id(key)
                             .source(document, contentType);
             indexer.add(indexRequest);
         }
@@ -123,7 +121,7 @@ class RowElasticsearchEmitter implements ElasticsearchEmitter<RowData> {
     private void processDelete(RowData row, RequestIndexer indexer) {
         final String key = createKey.apply(row);
         final DeleteRequest deleteRequest =
-                new DeleteRequest(indexGenerator.generate(row), documentType, key);
+                new DeleteRequest(indexGenerator.generate(row), key);
         indexer.add(deleteRequest);
     }
 }

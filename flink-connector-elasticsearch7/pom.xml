@@ -36,7 +36,9 @@ under the License.
 
 	<!-- Allow users to pass custom connector versions -->
 	<properties>
-		<elasticsearch.version>7.10.2</elasticsearch.version>
+		<!--<elasticsearch.version>7.10.2</elasticsearch.version>-->
+		<!--<elasticsearch.version>8.6.2</elasticsearch.version>-->
+		<elasticsearch.version>7.17.9</elasticsearch.version>
 	</properties>
 
 	<dependencies>
@@ -76,6 +78,24 @@ under the License.
 			<optional>true</optional>
 		</dependency>
 
+		<dependency>
+			<groupId>org.elasticsearch</groupId>
+			<artifactId>elasticsearch</artifactId>
+			<version>${elasticsearch.version}</version>
+			<!--
+			FLINK-7133: Excluding all org.ow2.asm from elasticsearch dependencies because
+			1. from the POV of client they are optional,
+			2. the version configured by default at the time of writing this comment (1.7.1) depends on asm 4.1
+			   and when it is shaded into elasticsearch-base artifact it conflicts with newer shaded versions of asm
+			   resulting in errors at the runtime when application is executed locally, e.g. from IDE.
+			-->
+			<exclusions>
+				<exclusion>
+					<groupId>org.ow2.asm</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<!-- Dependency for Elasticsearch 7.x REST Client -->
 		<dependency>
 			<groupId>org.elasticsearch.client</groupId>
@@ -84,11 +104,20 @@ under the License.
 			<!-- elasticsearch-rest-client includes two different versions of httpcore-nio -->
 			<exclusions>
 				<exclusion>
+					<groupId>org.elasticsearch</groupId>
+					<artifactId>elasticsearch</artifactId>
+				</exclusion>
+				<exclusion>
 					<groupId>org.apache.httpcomponents</groupId>
 					<artifactId>httpcore-nio</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!--<dependency>
+			<groupId>org.elasticsearch.client</groupId>
+			<artifactId>elasticsearch-rest-client</artifactId>
+			<version>${elasticsearch.version}</version>
+		</dependency>-->
 
 		<!-- We need to include httpcore-nio again in the correct version due to the exclusion above -->
 		<dependency>

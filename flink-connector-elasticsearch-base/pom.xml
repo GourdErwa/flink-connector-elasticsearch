@@ -36,7 +36,8 @@ under the License.
 
 	<!-- Allow users to pass custom connector versions -->
 	<properties>
-		<elasticsearch.version>7.10.2</elasticsearch.version>
+		<!--<elasticsearch.version>7.17.6</elasticsearch.version>-->
+		<elasticsearch.version>7.17.9</elasticsearch.version>
 	</properties>
 
 	<dependencies>
@@ -91,7 +92,19 @@ under the License.
 			<groupId>org.elasticsearch.client</groupId>
 			<artifactId>elasticsearch-rest-high-level-client</artifactId>
 			<version>${elasticsearch.version}</version>
+			<!-- elasticsearch-rest-client includes two different versions of httpcore-nio -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.elasticsearch</groupId>
+					<artifactId>elasticsearch</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpcore-nio</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
+
 
 		<!-- Tests -->
 

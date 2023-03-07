@@ -31,7 +31,8 @@ import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestClientBuilder;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.unit.TimeValue;
+import org.elasticsearch.client.RestHighLevelClientBuilder;
+import org.elasticsearch.core.TimeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,8 +68,10 @@ public class Elasticsearch7ApiCallBridge
         RestClientBuilder builder =
                 RestClient.builder(httpHosts.toArray(new HttpHost[httpHosts.size()]));
         restClientFactory.configureRestClientBuilder(builder);
-
-        RestHighLevelClient rhlClient = new RestHighLevelClient(builder);
+        // https://www.elastic.co/guide/en/elasticsearch/client/java-api-client/current/migrate-hlrc.html
+        RestHighLevelClient rhlClient = new RestHighLevelClientBuilder(builder.build())
+                .setApiCompatibilityMode(true)
+                .build();
 
         return rhlClient;
     }
@@ -79,7 +82,7 @@ public class Elasticsearch7ApiCallBridge
         return BulkProcessor.builder(
                 (request, bulkListener) ->
                         client.bulkAsync(request, RequestOptions.DEFAULT, bulkListener),
-                listener);
+                listener, "flink-es8");
     }
 
     @Override

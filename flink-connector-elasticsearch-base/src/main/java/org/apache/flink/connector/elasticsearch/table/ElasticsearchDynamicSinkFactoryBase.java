@@ -85,7 +85,7 @@ abstract class ElasticsearchDynamicSinkFactoryBase implements DynamicTableSinkFa
 
     @Nullable
     String getDocumentType(ElasticsearchConfiguration configuration) {
-        return null; // document type is only set in Elasticsearch versions < 7
+        return "_doc"; // document type is only set in Elasticsearch versions < 7
     }
 
     @Override
